@@ -1,0 +1,287 @@
+import 'package:chaos_thought_feast/constants/asset_paths.dart';
+import 'package:flutter/material.dart';
+import '../../constants/strings.dart';
+import '../../domain/entities/game_mode.dart';
+import '../../services/firedb_service.dart';
+import '../../services/navigation_service.dart';
+import '../../services/wiki_service.dart';
+import '../widgets/category_modal_content.dart';
+
+class GameSetupScreen extends StatefulWidget {
+  final GameMode gameMode;
+  final String startTitle;
+  final String goalTitle;
+
+  GameSetupScreen({
+    Key? key,
+    required this.gameMode,
+    required this.startTitle,
+    required this.goalTitle,
+  }) : super(key: key);
+
+  @override
+  _GameSetupScreenState createState() => _GameSetupScreenState();
+}
+
+class _GameSetupScreenState extends State<GameSetupScreen> {
+  late TextEditingController _startTitleController;
+  late TextEditingController _goalTitleController;
+
+  String? _selectedCategory;
+  Map<String, List<String>> _categories = {};
+  Map<String, bool> _expandedCategories = {};
+
+  bool get isStartTitleEditable => widget.gameMode == GameMode.findYourLikings;
+  bool get isGoalTitleEditable => widget.gameMode != GameMode.anyfinCanHappen;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTitleController = TextEditingController(text: widget.startTitle);
+    _goalTitleController = TextEditingController(text: widget.goalTitle);
+    _fetchCategories();
+  }
+
+  Future<void> _fetchCategories() async {
+    FireDBService fireDBService = FireDBService();
+    Map<String, List<String>> categories = await fireDBService.fetchCategories();
+    setState(() {
+      _categories = categories;
+      _expandedCategories = Map.fromIterable(categories.keys,
+          key: (item) => item, value: (item) => false);
+    });
+  }
+
+  @override
+  void dispose() {
+    _startTitleController.dispose();
+    _goalTitleController.dispose();
+    super.dispose();
+  }
+
+  String getTitle(GameMode gameMode) {
+    switch (widget.gameMode) {
+      case GameMode.findYourLikings:
+        return AppStrings.findYourLikings;
+      case GameMode.likingSpectrumJourney:
+        return AppStrings.likingSpectrumJourney;
+      case GameMode.anyfinCanHappen:
+        return AppStrings.anyfinCanHappen;
+      default:
+        return AppStrings.findYourLikings; // Default title or consider throwing an exception if unreachable
+    }
+  }
+
+  String getBackgroundImage() {
+    switch (widget.gameMode) {
+      case GameMode.findYourLikings:
+        return AssetPaths.findYourLikings;
+      case GameMode.likingSpectrumJourney:
+        return AssetPaths.likingSpectrumJourney;
+      case GameMode.anyfinCanHappen:
+        return AssetPaths.anyfinCanHappen;
+      default:
+        return "assets/defaultbackground.webp";
+    }
+  }
+
+  Widget _categorySelector(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: TextField(
+            controller: TextEditingController(text: _selectedCategory),
+            decoration: InputDecoration(
+              labelText: 'Select a category',
+              border: OutlineInputBorder(),
+            ),
+            readOnly: true,
+          ),
+        ),
+        IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () => _showCategoryModal(context),
+        ),
+      ],
+    );
+  }
+
+  void _showCategoryModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.9,
+          child: CategoryModalContent(
+            categories: _categories,
+            onSubcategorySelected: (subcategory) {
+              setState(() {
+                _selectedCategory = subcategory;
+              });
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTitleFieldWithRandomButton({
+    required TextEditingController controller,
+    required String label,
+    VoidCallback? onRandomSelected,
+    VoidCallback? onInfoSelected,
+  }) {
+    return Row(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(right: 2.0),
+          child: IconButton(
+            icon: Icon(Icons.info_outline),
+            onPressed: onInfoSelected,
+          ),
+        ),
+        Expanded(
+          child: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              labelText: label,
+              border: OutlineInputBorder(),
+            ),
+          ),
+        ),
+        IconButton(
+          icon: Image.asset(
+            'assets/icons/shuffle_icon.png',
+            width: 48.0,
+            height: 48.0,
+          ),
+          onPressed: onRandomSelected,
+        ),
+      ],
+    );
+  }
+
+  void showArticleInfoDialog(BuildContext context, String title) async {
+    WikiService wikiService = WikiService();
+    String introText = await wikiService.fetchIntroText(title);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SingleChildScrollView(
+            child: Text(
+              introText,
+              style: TextStyle(
+                fontSize: 18.0,
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void selectRandomArticleForTitle(TextEditingController controller) async {
+    FireDBService fireDBService = FireDBService();
+    String? randomArticleTitle;
+
+    if (_selectedCategory == null || _selectedCategory!.isEmpty) {
+      randomArticleTitle = await fireDBService.getRandomArticle();
+    } else {
+      randomArticleTitle = await fireDBService.getRandomArticleFromCategory(_selectedCategory!);
+    }
+
+    if (randomArticleTitle != null) {
+      setState(() {
+        controller.text = randomArticleTitle!;
+      });
+    } else {
+      controller.text = "No article found";
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(getTitle(widget.gameMode)),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(getBackgroundImage()),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Container(
+                padding: EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      getTitle(widget.gameMode),
+                      style: TextStyle(
+                        fontSize: 25.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 16),
+                    if (isStartTitleEditable)
+                      _buildTitleFieldWithRandomButton(
+                        controller: _startTitleController,
+                        label: 'Starting Concept',
+                        onRandomSelected: () => selectRandomArticleForTitle(_startTitleController),
+                        onInfoSelected: () => showArticleInfoDialog(context, _startTitleController.text),
+                      ),
+                    SizedBox(height: 16),
+                    if (isGoalTitleEditable)
+                      _buildTitleFieldWithRandomButton(
+                        controller: _goalTitleController,
+                        label: 'Goal Concept',
+                        onRandomSelected: () => selectRandomArticleForTitle(_goalTitleController),
+                        onInfoSelected: () => showArticleInfoDialog(context, _goalTitleController.text),
+                      ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        GameMode selectedMode = GameMode.findYourLikings;
+                        String startTitle = _startTitleController.text;
+                        String goalTitle = _goalTitleController.text;
+
+                        navigationService.navigateToGame(context, selectedMode, startTitle, goalTitle);
+                      },
+                      child: Text('Start Game'),
+                    ),
+                    const SizedBox(height: 16),
+                    _categorySelector(context),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+}
