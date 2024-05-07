@@ -1,4 +1,4 @@
-package use.pl.chaos_thought_feast
+package pl.use.chaos_thought_feast
 
 import io.flutter.embedding.android.FlutterActivity
 
