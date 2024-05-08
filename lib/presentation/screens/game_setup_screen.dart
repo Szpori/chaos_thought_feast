@@ -1,8 +1,8 @@
 import 'package:chaos_thought_feast/constants/asset_paths.dart';
+import 'package:chaos_thought_feast/services/local_data_service.dart';
 import 'package:flutter/material.dart';
 import '../../constants/strings.dart';
 import '../../domain/entities/game_mode.dart';
-import '../../services/firedb_service.dart';
 import '../../services/navigation_service.dart';
 import '../../services/wiki_service.dart';
 import '../widgets/category_modal_content.dart';
@@ -26,6 +26,7 @@ class GameSetupScreen extends StatefulWidget {
 class _GameSetupScreenState extends State<GameSetupScreen> {
   late TextEditingController _startTitleController;
   late TextEditingController _goalTitleController;
+  late LocalDataService _localDataService;
 
   String? _selectedCategory;
   Map<String, List<String>> _categories = {};
@@ -39,12 +40,18 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
     super.initState();
     _startTitleController = TextEditingController(text: widget.startTitle);
     _goalTitleController = TextEditingController(text: widget.goalTitle);
-    _fetchCategories();
+    _localDataService = LocalDataService();
+    _initData();
   }
 
-  Future<void> _fetchCategories() async {
-    FireDBService fireDBService = FireDBService();
-    Map<String, List<String>> categories = await fireDBService.fetchCategories();
+  Future<void> _initData() async {
+    await _localDataService.loadArticles();
+    await _localDataService.loadCategories();
+    _fetchCategoriesFromLocalData();
+  }
+
+  Future<void> _fetchCategoriesFromLocalData() async {
+    Map<String, List<String>> categories = _localDataService.getCategories();
     setState(() {
       _categories = categories;
       _expandedCategories = Map.fromIterable(categories.keys,
@@ -192,22 +199,17 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
   }
 
   void selectRandomArticleForTitle(TextEditingController controller) async {
-    FireDBService fireDBService = FireDBService();
     String? randomArticleTitle;
 
     if (_selectedCategory == null || _selectedCategory!.isEmpty) {
-      randomArticleTitle = await fireDBService.getRandomArticle();
+      randomArticleTitle = await _localDataService.getRandomArticle();
     } else {
-      randomArticleTitle = await fireDBService.getRandomArticleFromCategory(_selectedCategory!);
+      randomArticleTitle = await _localDataService.getRandomArticleFromCategory(_selectedCategory!);
     }
 
-    if (randomArticleTitle != null) {
-      setState(() {
-        controller.text = randomArticleTitle!;
-      });
-    } else {
-      controller.text = "No article found";
-    }
+    setState(() {
+      controller.text = randomArticleTitle ?? "No article found";
+    });
   }
 
   @override
