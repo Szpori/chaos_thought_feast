@@ -135,6 +135,7 @@ class _GameScreenState extends State<GameScreen> {
   void _findAndHighlightPaths() async {
     goodOptions.clear();
     pathDescriptions.clear();  // Clear previous paths
+    firstGoodOptionIndex = null;
 
     int minPathLength = 100;
     int maxPathLength = 0;
