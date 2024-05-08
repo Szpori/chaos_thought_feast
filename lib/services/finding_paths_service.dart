@@ -90,6 +90,20 @@ class FindingPathsService {
     backwardQueue.add([Path((goalTitle), [])]);
     List<List<Path>> foundPaths = [];
 
+    bool containsPath(List<Path> newPath) {
+      var equality = const ListEquality();
+      return foundPaths.any((existingPath) => equality.equals(
+          existingPath.map((p) => p.title).toList(),
+          newPath.map((p) => p.title).toList()
+      ));
+    }
+
+    void addPathIfUnique(List<Path> newPath) {
+      if (!containsPath(newPath)) {
+        foundPaths.add(newPath);
+      }
+    }
+
 
     while (forwardQueue.isNotEmpty && backwardQueue.isNotEmpty && foundPaths.length < maxPaths) {
       if (forwardQueue.isNotEmpty) {
@@ -99,11 +113,10 @@ class FindingPathsService {
         _expandQueue(backwardQueue, visitedBackward, incomingLinks, startTitle, maxLength, reverse: true);
       }
 
-      // Check for meeting point
       String? meetingPoint = _findMeetingPoint(visitedForward, visitedBackward);
       if (meetingPoint != null) {
-        print("Meeting point found at: $meetingPoint");
-        foundPaths.add(_connectPaths(visitedForward[meetingPoint]!, visitedBackward[meetingPoint]!));
+        List<Path> newPath = _connectPaths(visitedForward[meetingPoint]!, visitedBackward[meetingPoint]!);
+        addPathIfUnique(newPath);
         if (foundPaths.length >= maxPaths) break;
       }
     }
