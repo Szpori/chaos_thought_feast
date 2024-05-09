@@ -6,6 +6,7 @@ import 'package:flutter/services.dart' show rootBundle;
 class Path {
   final String title;
   final List<Path> path;
+  int weight = 0;
 
   Path(this.title, this.path);
 }
@@ -66,16 +67,26 @@ class FindingPathsService {
     visited[currentNode.title] = currentPath;
     var currentLinks = links[currentNode.title]?.toList() ?? [];
 
-    for (String link in currentLinks) {
+    for (int i = 0; i < currentLinks.length; i++) {
+      String link = currentLinks[i];
+      int weight = (i / 20).floor() + 1;
+
       if (!visited.containsKey(link)) {
         List<Path> newPath = List<Path>.from(currentPath)..add(Path(link, []));
+        int newWeight = currentPath.last.weight + weight;
+        newPath.last.weight = newWeight;
         queue.add(newPath);
-      } else {
       }
     }
   }
 
-  Future<List<List<Path>>> findPaths(String startTitle, String goalTitle, int maxPaths, int maxLength) async {
+  var forwardQueue = PriorityQueue<List<Path>>((a, b) {
+    int weightA = a.last.weight;
+    int weightB = b.last.weight;
+    return weightA.compareTo(weightB);
+  });
+
+  Future<List<List<Path>>> findPaths(String startTitle, String goalTitle, int maxPaths, int maxLength, {Duration extraTime = const Duration(seconds: 2)}) async {
     await init();
 
     print("Starting title: $startTitle with links: ${outgoingLinks[(startTitle)]}");
@@ -90,6 +101,16 @@ class FindingPathsService {
     backwardQueue.add([Path((goalTitle), [])]);
     List<List<Path>> foundPaths = [];
 
+    Stopwatch stopwatch = Stopwatch();
+    bool firstPathFound = false;
+
+    bool containsPath(List<Path> newPath) {
+      var equality = const ListEquality();
+      return foundPaths.any((existingPath) => equality.equals(
+          existingPath.map((p) => p.title).toList(),
+          newPath.map((p) => p.title).toList()
+      ));
+    }
 
     while (forwardQueue.isNotEmpty && backwardQueue.isNotEmpty && foundPaths.length < maxPaths) {
       if (forwardQueue.isNotEmpty) {
@@ -99,15 +120,24 @@ class FindingPathsService {
         _expandQueue(backwardQueue, visitedBackward, incomingLinks, startTitle, maxLength, reverse: true);
       }
 
-      // Check for meeting point
       String? meetingPoint = _findMeetingPoint(visitedForward, visitedBackward);
       if (meetingPoint != null) {
-        print("Meeting point found at: $meetingPoint");
-        foundPaths.add(_connectPaths(visitedForward[meetingPoint]!, visitedBackward[meetingPoint]!));
-        if (foundPaths.length >= maxPaths) break;
+        List<Path> newPath = _connectPaths(visitedForward[meetingPoint]!, visitedBackward[meetingPoint]!);
+        if (!containsPath(newPath)) {
+          foundPaths.add(newPath);
+          if (!firstPathFound) {
+            stopwatch.start();
+            firstPathFound = true;
+          }
+        }
+      }
+
+      if ( (foundPaths.isNotEmpty && foundPaths[0].length == 2) || (firstPathFound && stopwatch.elapsed >= extraTime)) {
+        break;
       }
     }
 
+    stopwatch.stop();
     return foundPaths;
   }
 
