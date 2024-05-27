@@ -88,6 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (user != null) {
           print("Google Sign-In successful, User: ${user.email}");
         } else {
+          print("Google Sign-In UNsuccessful, User: ${user?.email}");
         }
       },
       child: Text('Sign in with Google'),
