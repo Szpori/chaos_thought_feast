@@ -26,7 +26,7 @@ class AuthService {
         return userCredential.user;
       }
     } catch (e) {
-      print(e.toString());
+      print('Google Sign-In Error: ${e.toString()}');
       return null;
     }
   }
