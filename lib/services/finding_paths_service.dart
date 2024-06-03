@@ -54,6 +54,14 @@ class FindingPathsService {
     }
   }
 
+  bool hasOutgoingLinks(String title) {
+    return outgoingLinks.containsKey(title) && outgoingLinks[title]!.isNotEmpty;
+  }
+
+  bool hasIncomingLinks(String title) {
+    return incomingLinks.containsKey(title) && incomingLinks[title]!.isNotEmpty;
+  }
+
   void _expandQueue(PriorityQueue<List<Path>> queue, Map<String, List<Path>> visited, Map<String, List<String>> links, String targetTitle, int maxLength, {bool reverse = false}) {
     if (queue.isEmpty) return;
     List<Path> currentPath = queue.removeFirst();

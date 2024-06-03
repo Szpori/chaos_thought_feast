@@ -51,9 +51,13 @@ class _GameScreenState extends State<GameScreen> {
     conceptsHistory.add(currentTitle);
     options = [];
     goodOptions = {};
-    _fetchOptions((currentTitle));
-    findingPathsService.init();
-    //_fetchKeywords(currentTitle);
+    _initServices();
+  }
+
+  Future<void> _initServices() async {
+    await findingPathsService.init();
+    _fetchOptions(currentTitle);
+    //_fetchKeywords(currentTitle); //
   }
 
   @override

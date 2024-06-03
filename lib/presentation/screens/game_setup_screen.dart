@@ -3,6 +3,7 @@ import 'package:chaos_thought_feast/services/local_data_service.dart';
 import 'package:flutter/material.dart';
 import '../../constants/strings.dart';
 import '../../domain/entities/game_mode.dart';
+import '../../services/finding_paths_service.dart';
 import '../../services/navigation_service.dart';
 import '../../services/wiki_service.dart';
 import '../widgets/category_modal_content.dart';
@@ -27,6 +28,7 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
   late TextEditingController _startTitleController;
   late TextEditingController _goalTitleController;
   late LocalDataService _localDataService;
+  late FindingPathsService _findingPathsService;
 
   String? _selectedCategory;
   Map<String, List<String>> _categories = {};
@@ -41,12 +43,14 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
     _startTitleController = TextEditingController(text: widget.startTitle);
     _goalTitleController = TextEditingController(text: widget.goalTitle);
     _localDataService = LocalDataService();
+    _findingPathsService = FindingPathsService();
     _initData();
   }
 
   Future<void> _initData() async {
     await _localDataService.loadArticles();
     await _localDataService.loadCategories();
+    await _findingPathsService.init();
     _fetchCategoriesFromLocalData();
   }
 
@@ -198,13 +202,25 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
     );
   }
 
-  void selectRandomArticleForTitle(TextEditingController controller) async {
+  void selectRandomArticleForTitle(TextEditingController controller, bool checkOutgoingLinks) async {
+    await FindingPathsService().init();
+
     String? randomArticleTitle;
 
     if (_selectedCategory == null || _selectedCategory!.isEmpty) {
       randomArticleTitle = await _localDataService.getRandomArticle();
     } else {
       randomArticleTitle = await _localDataService.getRandomArticleFromCategory(_selectedCategory!);
+    }
+
+    if (checkOutgoingLinks) {
+      while (randomArticleTitle != null && !FindingPathsService().hasOutgoingLinks(randomArticleTitle)) {
+        randomArticleTitle = await _localDataService.getRandomArticle();
+      }
+    } else {
+      while (randomArticleTitle != null && !FindingPathsService().hasIncomingLinks(randomArticleTitle)) {
+        randomArticleTitle = await _localDataService.getRandomArticle();
+      }
     }
 
     setState(() {
@@ -252,7 +268,7 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
                       _buildTitleFieldWithRandomButton(
                         controller: _startTitleController,
                         label: 'Starting Concept',
-                        onRandomSelected: () => selectRandomArticleForTitle(_startTitleController),
+                        onRandomSelected: () => selectRandomArticleForTitle(_startTitleController, true),
                         onInfoSelected: () => showArticleInfoDialog(context, _startTitleController.text),
                       ),
                     SizedBox(height: 16),
@@ -260,7 +276,7 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
                       _buildTitleFieldWithRandomButton(
                         controller: _goalTitleController,
                         label: 'Goal Concept',
-                        onRandomSelected: () => selectRandomArticleForTitle(_goalTitleController),
+                        onRandomSelected: () => selectRandomArticleForTitle(_goalTitleController, false),
                         onInfoSelected: () => showArticleInfoDialog(context, _goalTitleController.text),
                       ),
                     const SizedBox(height: 16),
