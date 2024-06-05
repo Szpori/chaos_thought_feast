@@ -2,7 +2,7 @@ import 'package:chaos_thought_feast/presentation/screens/login_register_screen.d
 import 'package:chaos_thought_feast/presentation/screens/main_menu_activity.dart';
 import 'package:flutter/cupertino.dart';
 
-import '../../services/auth_service.dart';
+import '../../services/fire_db_auth_service.dart';
 import '../../services/navigation_service.dart';
 
 class WidgetTree extends StatefulWidget {

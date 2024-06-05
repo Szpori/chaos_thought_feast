@@ -1,14 +1,26 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class AuthService {
+abstract class IFirebaseAuthService {
+  User? getCurrentUser();
+  Stream<User?> get authStateChanges;
+  Future<User?> signInWithGoogle();
+  Future<void> signInWithEmailAndPassword({required String email, required String password});
+  Future<void> createUserWithEmailAndPassword({required String email, required String password});
+  Future<void> signOut();
+}
+
+class AuthService implements IFirebaseAuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  User? get currentUser => _firebaseAuth.currentUser;
+  @override
+  User? getCurrentUser() => _firebaseAuth.currentUser;
 
+  @override
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
 
+  @override
   Future<User?> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -31,6 +43,7 @@ class AuthService {
     }
   }
 
+  @override
   Future<void> signInWithEmailAndPassword({
     required String email,
     required String password,
@@ -40,6 +53,8 @@ class AuthService {
       password: password,
     );
   }
+
+  @override
   Future<void> createUserWithEmailAndPassword({
     required String email,
     required String password,
@@ -50,8 +65,8 @@ class AuthService {
     );
   }
 
+  @override
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
   }
-
 }

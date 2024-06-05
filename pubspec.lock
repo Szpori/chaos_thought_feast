@@ -170,7 +170,7 @@ packages:
     source: hosted
     version: "4.17.0"
   firebase_auth_platform_interface:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: firebase_auth_platform_interface
       sha256: d44458576804f246a126fe797547330d2f7bd62069ce12479b583082340a2e4d
@@ -194,7 +194,7 @@ packages:
     source: hosted
     version: "2.27.1"
   firebase_core_platform_interface:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: firebase_core_platform_interface
       sha256: c437ae5d17e6b5cc7981cf6fd458a5db4d12979905f9aafd1fea930428a9fe63
