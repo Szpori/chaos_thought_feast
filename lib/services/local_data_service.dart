@@ -1,21 +1,22 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-import 'package:flutter/services.dart' show rootBundle;
-
+import 'package:flutter/services.dart' show rootBundle, AssetBundle;
 
 class LocalDataService {
-
   List<dynamic> _articles = [];
   Map<String, List<String>> _categories = {};
+  final AssetBundle bundle;
+
+  LocalDataService({AssetBundle? bundle}) : bundle = bundle ?? rootBundle;
 
   Future<void> loadArticles() async {
-    final String response = await rootBundle.loadString('assets/data/mostPopularPagesWithCategories.json');
+    final String response = await bundle.loadString('assets/data/mostPopularPagesWithCategories.json');
     _articles = json.decode(response);
   }
 
   Future<void> loadCategories() async {
-    final String response = await rootBundle.loadString('assets/data/categories.json');
+    final String response = await bundle.loadString('assets/data/categories.json');
     _categories = Map<String, List<String>>.from(json.decode(response).map(
             (k, v) => MapEntry<String, List<String>>(k, List<String>.from(v))));
   }
