@@ -1,11 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../../services/auth_service.dart';
+import '../../services/fire_db_auth_service.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({Key? key}) : super(key: key);
 
-  final User? user = AuthService().currentUser;
+  final User? user = AuthService().getCurrentUser();
 
   Future<void> signOut(BuildContext context) async {
     try {

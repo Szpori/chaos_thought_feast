@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../services/auth_service.dart';
+import '../../services/fire_db_auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -88,6 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (user != null) {
           print("Google Sign-In successful, User: ${user.email}");
         } else {
+          print("Google Sign-In UNsuccessful, User: ${user?.email}");
         }
       },
       child: Text('Sign in with Google'),

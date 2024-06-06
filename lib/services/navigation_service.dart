@@ -1,4 +1,3 @@
-import 'package:chaos_thought_feast/services/wiki_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -9,12 +8,21 @@ import '../presentation/screens/game_screen.dart';
 import '../presentation/screens/game_setup_screen.dart';
 import '../presentation/screens/game_win_screen.dart';
 import '../presentation/screens/profile_screen.dart';
-import 'firedb_service.dart';
+import 'fire_db_auth_service.dart';
+import 'fire_db_service.dart';
+
 
 class NavigationService {
-
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   GameMode? _currentGameMode;
+
+  final IFireDBService fireDBService;
+  final IFirebaseAuthService firebaseAuthService;
+
+  NavigationService({
+    required this.fireDBService,
+    required this.firebaseAuthService,
+  });
 
   void setCurrentGameMode(GameMode mode) {
     _currentGameMode = mode;
@@ -55,7 +63,7 @@ class NavigationService {
 
   Future<void> navigateToEndGame(BuildContext context, bool hasWon, String startConcept, String goalConcept, List<String> conceptsHistory, GameMode gameMode, int steps) async {
     if (hasWon) {
-      User? user = FirebaseAuth.instance.currentUser;
+      User? user = firebaseAuthService.getCurrentUser();
       String recordHolder = user?.email ?? 'anonymous';
       GameRecord record = GameRecord(
         startConcept: startConcept,
@@ -66,7 +74,6 @@ class NavigationService {
         recordHolder: recordHolder,
       );
 
-      FireDBService fireDBService = FireDBService();
       String resultText;
       SaveRecordResult result = await fireDBService.saveGameRecord(record);
 
@@ -102,19 +109,20 @@ class NavigationService {
         ),
       );
     } else {
-      // Navigate to the LoseScreen
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => GameLoseScreen(
-          goalConcept: goalConcept,
-          pathText: conceptsHistory.join("->"),
-          onGoToMainMenu: () {
-            Navigator.popUntil(context, (route) => route.isFirst);
-          },
-          onTryAgain: () {
-            navigateToGameSetup(context);
-          },
-        )),
+        MaterialPageRoute(
+          builder: (context) => GameLoseScreen(
+            goalConcept: goalConcept,
+            pathText: conceptsHistory.join("->"),
+            onGoToMainMenu: () {
+              Navigator.popUntil(context, (route) => route.isFirst);
+            },
+            onTryAgain: () {
+              navigateToGameSetup(context);
+            },
+          ),
+        ),
       );
     }
   }
@@ -130,14 +138,4 @@ class NavigationService {
   void navigateToRankings() {
     // Handle navigation to the Rankings screen
   }
-  static final NavigationService _instance = NavigationService._internal();
-
-  factory NavigationService() {
-    return _instance;
-  }
-
-  NavigationService._internal();
 }
-
-// Global instance
-final navigationService = NavigationService();

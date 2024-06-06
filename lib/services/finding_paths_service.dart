@@ -33,7 +33,7 @@ class FindingPathsService {
   }
 
   Future<void> _loadData() async {
-    var data = await rootBundle.loadString('assets/data/mergedOutput4.json');
+    var data = await rootBundle.loadString('assets/data/mergedOutput5.json');
     List<dynamic> jsonData;
     try {
       jsonData = json.decode(data);
@@ -52,6 +52,14 @@ class FindingPathsService {
         print("Item missing 'title': $item");
       }
     }
+  }
+
+  bool hasOutgoingLinks(String title) {
+    return outgoingLinks.containsKey(title) && outgoingLinks[title]!.isNotEmpty;
+  }
+
+  bool hasIncomingLinks(String title) {
+    return incomingLinks.containsKey(title) && incomingLinks[title]!.isNotEmpty;
   }
 
   void _expandQueue(PriorityQueue<List<Path>> queue, Map<String, List<Path>> visited, Map<String, List<String>> links, String targetTitle, int maxLength, {bool reverse = false}) {

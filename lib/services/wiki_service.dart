@@ -6,7 +6,9 @@ import 'package:html/dom.dart' as dom;
 import 'lang_service.dart';
 
 class WikiService {
-  final client = http.Client();
+  final http.Client client;
+
+  WikiService({http.Client? client}) : client = client ?? http.Client();
 
   Future<List<String>> fetchTitlesFromWikipedia(String pageTitle) async {
     List<String> titles = [];
@@ -52,6 +54,7 @@ class WikiService {
       }
     } catch (e) {
       print(e.toString());
+      rethrow;
     }
     return titles;
   }
@@ -173,5 +176,4 @@ class WikiService {
 
     return buffer.toString().trim();
   }
-
 }
