@@ -3,6 +3,7 @@ import 'package:chaos_thought_feast/services/local_data_service.dart';
 import 'package:flutter/material.dart';
 import '../../constants/strings.dart';
 import '../../domain/entities/game_mode.dart';
+import '../../locator.dart';
 import '../../services/finding_paths_service.dart';
 import '../../services/navigation_service.dart';
 import '../../services/wiki_service.dart';
@@ -286,7 +287,7 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
                         String startTitle = _startTitleController.text;
                         String goalTitle = _goalTitleController.text;
 
-                        navigationService.navigateToGame(context, selectedMode, startTitle, goalTitle);
+                        locator<NavigationService>().navigateToGame(context, selectedMode, startTitle, goalTitle);
                       },
                       child: Text('Start Game'),
                     ),

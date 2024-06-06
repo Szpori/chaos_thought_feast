@@ -5,6 +5,7 @@ import 'package:chaos_thought_feast/utils/StringUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
+import '../../locator.dart';
 import '../../services/navigation_service.dart';
 import '../../services/wiki_service.dart';
 import '../../services/finding_paths_service.dart';
@@ -224,7 +225,7 @@ class _GameScreenState extends State<GameScreen> {
 
     if (selectedTitle.replaceAll('_', ' ') == widget.goalConcept.replaceAll('_', ' ')) {
       int steps = conceptsHistory.length;
-      navigationService.navigateToEndGame(context, true, widget.startConcept, widget.goalConcept, conceptsHistory, widget.gameMode, steps);
+      locator<NavigationService>().navigateToEndGame(context, true, widget.startConcept, widget.goalConcept, conceptsHistory, widget.gameMode, steps);
     } else {
       setState(() {
         _fetchOptions((currentTitle));
@@ -245,8 +246,6 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    NavigationService navigationService = NavigationService();
 
     return Scaffold(
       appBar: AppBar(
@@ -404,7 +403,7 @@ class _GameScreenState extends State<GameScreen> {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    navigationService.navigateToEndGame(
+                    locator<NavigationService>().navigateToEndGame(
                       context,
                       false,
                       widget.goalConcept,

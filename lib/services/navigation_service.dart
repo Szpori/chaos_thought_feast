@@ -1,4 +1,3 @@
-import 'package:chaos_thought_feast/services/wiki_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -20,25 +19,10 @@ class NavigationService {
   final IFireDBService fireDBService;
   final IFirebaseAuthService firebaseAuthService;
 
-  NavigationService._internal({
+  NavigationService({
     required this.fireDBService,
     required this.firebaseAuthService,
   });
-
-  // Named constructor for testing purposes
-  NavigationService.testConstructor({
-    required this.fireDBService,
-    required this.firebaseAuthService,
-  });
-
-  static final NavigationService _instance = NavigationService._internal(
-    fireDBService: RealFireDBService(),
-    firebaseAuthService: AuthService(),
-  );
-
-  factory NavigationService() {
-    return _instance;
-  }
 
   void setCurrentGameMode(GameMode mode) {
     _currentGameMode = mode;
@@ -155,6 +139,3 @@ class NavigationService {
     // Handle navigation to the Rankings screen
   }
 }
-
-// Global instance
-final navigationService = NavigationService();

@@ -11,8 +11,14 @@ abstract class IFirebaseAuthService {
 }
 
 class AuthService implements IFirebaseAuthService {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FirebaseAuth _firebaseAuth;
+  final GoogleSignIn _googleSignIn;
+
+  AuthService({
+    FirebaseAuth? firebaseAuth,
+    GoogleSignIn? googleSignIn,
+  })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
+        _googleSignIn = googleSignIn ?? GoogleSignIn();
 
   @override
   User? getCurrentUser() => _firebaseAuth.currentUser;
@@ -44,25 +50,13 @@ class AuthService implements IFirebaseAuthService {
   }
 
   @override
-  Future<void> signInWithEmailAndPassword({
-    required String email,
-    required String password,
-  }) async {
-    await _firebaseAuth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+  Future<void> signInWithEmailAndPassword({required String email, required String password}) async {
+    await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
   }
 
   @override
-  Future<void> createUserWithEmailAndPassword({
-    required String email,
-    required String password,
-  }) async {
-    await _firebaseAuth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+  Future<void> createUserWithEmailAndPassword({required String email, required String password}) async {
+    await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
   }
 
   @override

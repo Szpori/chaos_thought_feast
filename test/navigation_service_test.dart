@@ -1,4 +1,3 @@
-
 import 'package:chaos_thought_feast/services/fire_db_auth_service.dart';
 import 'package:chaos_thought_feast/services/fire_db_service.dart';
 import 'package:chaos_thought_feast/services/navigation_service.dart';
@@ -32,10 +31,10 @@ void main() {
     registerFallbackValue(FakeGameRecord());
   });
 
-  setUp(() {
+  setUp(() async {
     mockFireDBService = MockFireDBService();
     mockFirebaseAuthService = MockFirebaseAuthService();
-    navigationService = NavigationService.testConstructor(
+    navigationService = NavigationService(
       fireDBService: mockFireDBService,
       firebaseAuthService: mockFirebaseAuthService,
     );

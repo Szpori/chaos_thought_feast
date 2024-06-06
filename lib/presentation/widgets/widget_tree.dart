@@ -2,6 +2,7 @@ import 'package:chaos_thought_feast/presentation/screens/login_register_screen.d
 import 'package:chaos_thought_feast/presentation/screens/main_menu_activity.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../../locator.dart';
 import '../../services/fire_db_auth_service.dart';
 import '../../services/navigation_service.dart';
 
@@ -19,7 +20,7 @@ class _WidgetTreeState extends State<WidgetTree> {
       stream: AuthService().authStateChanges,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return MainMenuActivity(navigationService: navigationService);
+          return MainMenuActivity(navigationService: locator<NavigationService>());
         } else {
           return const LoginScreen();
         }
