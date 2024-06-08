@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/asset_paths.dart';
 import '../../constants/strings.dart';
+import '../../services/language_manager.dart';
 
 @immutable
-class MainMenuScreen extends StatelessWidget {
+class MainMenuScreen extends StatefulWidget {
   final VoidCallback onFindLikingsClicked;
   final VoidCallback onLikingSpectrumJourneyClicked;
   final VoidCallback onAnyfinCanHappenClicked;
@@ -21,6 +22,26 @@ class MainMenuScreen extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _MainMenuScreenState createState() => _MainMenuScreenState();
+}
+
+class _MainMenuScreenState extends State<MainMenuScreen> {
+  String _language = LanguageManager.defaultLanguage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLanguage();
+  }
+
+  Future<void> _loadLanguage() async {
+    final language = await LanguageManager.getLanguage();
+    setState(() {
+      _language = language;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
@@ -30,13 +51,13 @@ class MainMenuScreen extends StatelessWidget {
           ),
           Column(
             children: [
-              const Expanded(
+              Expanded(
                 flex: 2,
                 child: Align(
                   alignment: Alignment.center,
                   child: Text(
-                    AppStrings.chaosThoughtFeast,
-                    style: TextStyle(
+                    AppStrings.getTranslatedString('chaosThoughtFeast', _language),
+                    style: const TextStyle(
                       fontSize: 25.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -51,28 +72,28 @@ class MainMenuScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     ElevatedButton(
-                      onPressed: onFindLikingsClicked,
-                      child: const Text(AppStrings.findYourLikings),
+                      onPressed: widget.onFindLikingsClicked,
+                      child: Text(AppStrings.getTranslatedString('findYourLikings', _language)),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: onLikingSpectrumJourneyClicked,
-                      child: const Text(AppStrings.likingSpectrumJourney),
+                      onPressed: widget.onLikingSpectrumJourneyClicked,
+                      child: Text(AppStrings.getTranslatedString('likingSpectrumJourney', _language)),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: onAnyfinCanHappenClicked,
-                      child: const Text(AppStrings.anyfinCanHappen),
+                      onPressed: widget.onAnyfinCanHappenClicked,
+                      child: Text(AppStrings.getTranslatedString('anyfinCanHappen', _language)),
                     ),
                   ],
                 ),
               ),
-              Spacer(flex: 2),
+              const Spacer(flex: 2),
               ElevatedButton(
-                onPressed: onProfileClicked, // Use the callback here
-                child: const Text(AppStrings.profile), // The text for your button
+                onPressed: widget.onProfileClicked,
+                child: Text(AppStrings.getTranslatedString('profile', _language)),
               ),
-              Spacer(flex: 1),
+              const Spacer(flex: 1),
             ],
           ),
         ],

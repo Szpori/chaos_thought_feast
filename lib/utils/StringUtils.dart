@@ -8,4 +8,14 @@ class StringUtils {
   static String underscoreToSpace(String title) {
     return title.replaceAll('_', ' ');
   }
+
+  static Map<String, String> languageMap = {
+    'English': 'eng',
+    'Polish': 'pl'
+  };
+
+  static Map<String, String> reverseLanguageMap = {
+    'eng': 'English',
+    'pl': 'Polish'
+  };
 }
