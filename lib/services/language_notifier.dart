@@ -23,4 +23,6 @@ class LanguageNotifier extends ValueNotifier<String> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('language', StringUtils.languageMap[language]!);
   }
+
+  String get currentLanguageCode => StringUtils.languageMap[value]!;
 }

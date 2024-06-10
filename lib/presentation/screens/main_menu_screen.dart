@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/asset_paths.dart';
 import '../../constants/strings.dart';
-import '../../services/language_manager.dart';
 import '../../services/language_notifier.dart';
-import '../../utils/StringUtils.dart';
 
 @immutable
 class MainMenuScreen extends StatelessWidget {
@@ -31,6 +28,7 @@ class MainMenuScreen extends StatelessWidget {
       body: ValueListenableBuilder<String>(
         valueListenable: languageNotifier,
         builder: (context, language, child) {
+          final languageCode = languageNotifier.currentLanguageCode;
           return Stack(
             children: <Widget>[
               Positioned.fill(
@@ -43,7 +41,7 @@ class MainMenuScreen extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.center,
                       child: Text(
-                        AppStrings.getTranslatedString('chaosThoughtFeast', StringUtils.languageMap[language]!),
+                        AppStrings.getTranslatedString('chaosThoughtFeast', languageCode),
                         style: const TextStyle(
                           fontSize: 25.0,
                           fontWeight: FontWeight.bold,
@@ -60,17 +58,17 @@ class MainMenuScreen extends StatelessWidget {
                       children: <Widget>[
                         ElevatedButton(
                           onPressed: onFindLikingsClicked,
-                          child: Text(AppStrings.getTranslatedString('findYourLikings', StringUtils.languageMap[language]!)),
+                          child: Text(AppStrings.getTranslatedString('findYourLikings', languageCode)),
                         ),
                         const SizedBox(height: 16),
                         ElevatedButton(
                           onPressed: onLikingSpectrumJourneyClicked,
-                          child: Text(AppStrings.getTranslatedString('likingSpectrumJourney', StringUtils.languageMap[language]!)),
+                          child: Text(AppStrings.getTranslatedString('likingSpectrumJourney', languageCode)),
                         ),
                         const SizedBox(height: 16),
                         ElevatedButton(
                           onPressed: onAnyfinCanHappenClicked,
-                          child: Text(AppStrings.getTranslatedString('anyfinCanHappen', StringUtils.languageMap[language]!)),
+                          child: Text(AppStrings.getTranslatedString('anyfinCanHappen', languageCode)),
                         ),
                       ],
                     ),
@@ -78,7 +76,7 @@ class MainMenuScreen extends StatelessWidget {
                   const Spacer(flex: 2),
                   ElevatedButton(
                     onPressed: onProfileClicked,
-                    child: Text(AppStrings.getTranslatedString('profile', StringUtils.languageMap[language]!)),
+                    child: Text(AppStrings.getTranslatedString('profile', languageCode)),
                   ),
                   const Spacer(flex: 1),
                 ],

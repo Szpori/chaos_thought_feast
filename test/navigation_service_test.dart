@@ -1,5 +1,6 @@
 import 'package:chaos_thought_feast/services/fire_db_auth_service.dart';
 import 'package:chaos_thought_feast/services/fire_db_service.dart';
+import 'package:chaos_thought_feast/services/language_notifier.dart';
 import 'package:chaos_thought_feast/services/navigation_service.dart';
 import 'package:chaos_thought_feast/domain/entities/game_mode.dart';
 import 'package:chaos_thought_feast/domain/entities/game_record.dart';
@@ -16,6 +17,7 @@ import 'package:mocktail/mocktail.dart';
 class MockFireDBService extends Mock implements IFireDBService {}
 class MockFirebaseAuthService extends Mock implements IFirebaseAuthService {}
 class MockUser extends Mock implements User {}
+class MockLanguageNotifier extends Mock implements LanguageNotifier {}
 
 class FakeGameRecord extends Fake implements GameRecord {}
 
@@ -26,6 +28,7 @@ void main() {
   late MockFireDBService mockFireDBService;
   late MockFirebaseAuthService mockFirebaseAuthService;
   late MockUser mockUser;
+  late MockLanguageNotifier mockLanguageNotifier;
 
   setUpAll(() {
     registerFallbackValue(FakeGameRecord());
@@ -34,9 +37,11 @@ void main() {
   setUp(() async {
     mockFireDBService = MockFireDBService();
     mockFirebaseAuthService = MockFirebaseAuthService();
+    mockLanguageNotifier = MockLanguageNotifier();
     navigationService = NavigationService(
       fireDBService: mockFireDBService,
       firebaseAuthService: mockFirebaseAuthService,
+      languageNotifier: mockLanguageNotifier,
     );
     mockUser = MockUser();
 

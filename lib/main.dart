@@ -1,9 +1,4 @@
-import 'package:chaos_thought_feast/constants/strings.dart';
-import 'package:chaos_thought_feast/presentation/screens/profile_screen.dart';
-import 'package:chaos_thought_feast/presentation/widgets/main_menu_screen.dart';
 import 'package:chaos_thought_feast/presentation/widgets/widget_tree.dart';
-import 'package:chaos_thought_feast/services/fire_db_auth_service.dart';
-import 'package:chaos_thought_feast/services/fire_db_service.dart';
 import 'package:chaos_thought_feast/services/language_notifier.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

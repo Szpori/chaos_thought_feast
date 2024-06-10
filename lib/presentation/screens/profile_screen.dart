@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../services/fire_db_auth_service.dart';
-import '../../services/language_manager.dart';
 import '../../services/language_notifier.dart';
-import '../../utils/StringUtils.dart';
 
 class ProfileScreen extends StatefulWidget {
   final LanguageNotifier languageNotifier;
