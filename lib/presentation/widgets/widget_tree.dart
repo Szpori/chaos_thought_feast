@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 
 import '../../locator.dart';
 import '../../services/fire_db_auth_service.dart';
+import '../../services/language_notifier.dart';
 import '../../services/navigation_service.dart';
 
 class WidgetTree extends StatefulWidget {
@@ -20,7 +21,10 @@ class _WidgetTreeState extends State<WidgetTree> {
       stream: AuthService().authStateChanges,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return MainMenuActivity(navigationService: locator<NavigationService>());
+          return MainMenuActivity(
+            navigationService: locator<NavigationService>(),
+            languageNotifier: locator<LanguageNotifier>(),
+          );
         } else {
           return const LoginScreen();
         }

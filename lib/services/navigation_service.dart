@@ -10,6 +10,7 @@ import '../presentation/screens/game_win_screen.dart';
 import '../presentation/screens/profile_screen.dart';
 import 'fire_db_auth_service.dart';
 import 'fire_db_service.dart';
+import 'language_notifier.dart';
 
 
 class NavigationService {
@@ -18,10 +19,12 @@ class NavigationService {
 
   final IFireDBService fireDBService;
   final IFirebaseAuthService firebaseAuthService;
+  final LanguageNotifier languageNotifier;
 
   NavigationService({
     required this.fireDBService,
     required this.firebaseAuthService,
+    required this.languageNotifier,
   });
 
   void setCurrentGameMode(GameMode mode) {
@@ -33,8 +36,7 @@ class NavigationService {
     if (modeToUse != null) {
       _currentGameMode = modeToUse;
 
-      Navigator.push(
-        context,
+      Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => GameSetupScreen(
             gameMode: modeToUse,
@@ -49,8 +51,7 @@ class NavigationService {
   }
 
   void navigateToGame(BuildContext context, GameMode mode, String startTitle, String goalTitle) {
-    Navigator.push(
-      context,
+    Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => GameScreen(
           gameMode: mode,
@@ -92,8 +93,7 @@ class NavigationService {
           break;
       }
 
-      Navigator.pushReplacement(
-        context,
+      Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => GameWinScreen(
             goalConcept: goalConcept,
@@ -109,8 +109,7 @@ class NavigationService {
         ),
       );
     } else {
-      Navigator.push(
-        context,
+      Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => GameLoseScreen(
             goalConcept: goalConcept,
@@ -128,9 +127,9 @@ class NavigationService {
   }
 
   void navigateToProfile(BuildContext context) {
-    navigatorKey.currentState?.push(
+    Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ProfileScreen(),
+        builder: (context) => ProfileScreen(languageNotifier: languageNotifier),
       ),
     );
   }

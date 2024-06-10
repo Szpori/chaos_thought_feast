@@ -2,10 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../services/fire_db_auth_service.dart';
 import '../../services/language_manager.dart';
+import '../../services/language_notifier.dart';
 import '../../utils/StringUtils.dart';
 
 class ProfileScreen extends StatefulWidget {
-  ProfileScreen({Key? key}) : super(key: key);
+  final LanguageNotifier languageNotifier;
+
+  ProfileScreen({Key? key, required this.languageNotifier}) : super(key: key);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -13,27 +16,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final User? user = AuthService().getCurrentUser();
-  String _selectedLanguage = 'English';
-
-  @override
-  void initState() {
-    super.initState();
-    _loadLanguage();
-  }
-
-  Future<void> _loadLanguage() async {
-    final languageCode = await LanguageManager.getLanguage();
-    setState(() {
-      _selectedLanguage = StringUtils.reverseLanguageMap[languageCode]!;
-    });
-  }
-
-  Future<void> _saveLanguage(String language) async {
-    await LanguageManager.setLanguage(StringUtils.languageMap[language]!);
-    setState(() {
-      _selectedLanguage = language;
-    });
-  }
 
   Future<void> signOut(BuildContext context) async {
     try {
@@ -60,19 +42,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _languageSwitch() {
-    return DropdownButton<String>(
-      value: _selectedLanguage,
-      onChanged: (String? newValue) {
-        if (newValue != null) {
-          _saveLanguage(newValue);
-        }
-      },
-      items: <String>['English', 'Polish'].map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
+    return ValueListenableBuilder<String>(
+      valueListenable: widget.languageNotifier,
+      builder: (context, value, child) {
+        return DropdownButton<String>(
           value: value,
-          child: Text(value),
+          onChanged: (String? newValue) {
+            if (newValue != null) {
+              widget.languageNotifier.setLanguage(newValue);
+            }
+          },
+          items: <String>['English', 'Polish'].map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
         );
-      }).toList(),
+      },
     );
   }
 
