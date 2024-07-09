@@ -23,17 +23,21 @@ class FindingPathsService {
 
   FindingPathsService._internal();
 
-  Future<void> init() async {
+  Future<void> init(String languageCode) async {
     if (!_isInitialized) {
-      _initialization ??= _loadData();
+      _initialization ??= _loadData(languageCode);
       await _initialization;
       _isInitialized = true;
       _initialization = null;
     }
   }
 
-  Future<void> _loadData() async {
-    var data = await rootBundle.loadString('assets/data/mergedOutput5.json');
+  Future<void> _loadData(String languageCode) async {
+    String filePath = languageCode == 'pl'
+        ? 'assets/data/mergedOutputPL.json'
+        : 'assets/data/mergedOutput5.json';
+
+    var data = await rootBundle.loadString(filePath);
     List<dynamic> jsonData;
     try {
       jsonData = json.decode(data);
@@ -95,7 +99,7 @@ class FindingPathsService {
   });
 
   Future<List<List<Path>>> findPaths(String startTitle, String goalTitle, int maxPaths, int maxLength, {Duration extraTime = const Duration(seconds: 2)}) async {
-    await init();
+    await init('en');  // Make sure the service is initialized with English as default or use the required language code
 
     print("Starting title: $startTitle with links: ${outgoingLinks[(startTitle)]}");
     print("Goal title: $goalTitle with links: ${incomingLinks[(goalTitle)]}");
@@ -140,7 +144,7 @@ class FindingPathsService {
         }
       }
 
-      if ( (foundPaths.isNotEmpty && foundPaths[0].length == 2) || (firstPathFound && stopwatch.elapsed >= extraTime)) {
+      if ((foundPaths.isNotEmpty && foundPaths[0].length == 2) || (firstPathFound && stopwatch.elapsed >= extraTime)) {
         break;
       }
     }
@@ -168,5 +172,4 @@ class FindingPathsService {
     // Wrap the result in a list of list of paths for consistency with the expected return type
     return fullPath;
   }
-
 }

@@ -54,7 +54,7 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
     final languageCode = languageNotifier.currentLanguageCode;
     await _localDataService.loadArticles(languageCode);
     await _localDataService.loadCategories(languageCode);
-    await _findingPathsService.init();
+    await _findingPathsService.init(languageCode);
     _fetchCategoriesFromLocalData();
   }
 
@@ -206,8 +206,8 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
     );
   }
 
-  void selectRandomArticleForTitle(TextEditingController controller, bool checkOutgoingLinks) async {
-    await FindingPathsService().init();
+  void selectRandomArticleForTitle(String languageCode, TextEditingController controller, bool checkOutgoingLinks) async {
+    await _findingPathsService.init(languageCode);
 
     String? randomArticleTitle;
 
@@ -217,7 +217,6 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
       randomArticleTitle = await _localDataService.getRandomArticleFromCategory(_selectedCategory!);
     }
 
-    /*
     if (checkOutgoingLinks) {
       while (randomArticleTitle != null && !FindingPathsService().hasOutgoingLinks(randomArticleTitle)) {
         randomArticleTitle = await _localDataService.getRandomArticle();
@@ -227,8 +226,6 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
         randomArticleTitle = await _localDataService.getRandomArticle();
       }
     }
-
-     */
 
     setState(() {
       controller.text = randomArticleTitle ?? "No article found";
@@ -280,7 +277,7 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
                           _buildTitleFieldWithRandomButton(
                             controller: _startTitleController,
                             label: AppStrings.getTranslatedString('startingConcept', languageCode),
-                            onRandomSelected: () => selectRandomArticleForTitle(_startTitleController, true),
+                            onRandomSelected: () => selectRandomArticleForTitle(languageCode, _startTitleController, true),
                             onInfoSelected: () => showArticleInfoDialog(context, _startTitleController.text),
                           ),
                         SizedBox(height: 16),
@@ -288,7 +285,7 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
                           _buildTitleFieldWithRandomButton(
                             controller: _goalTitleController,
                             label: AppStrings.getTranslatedString('goalConcept', languageCode),
-                            onRandomSelected: () => selectRandomArticleForTitle(_goalTitleController, false),
+                            onRandomSelected: () => selectRandomArticleForTitle(languageCode, _goalTitleController, false),
                             onInfoSelected: () => showArticleInfoDialog(context, _goalTitleController.text),
                           ),
                         const SizedBox(height: 16),

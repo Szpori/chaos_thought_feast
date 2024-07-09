@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../locator.dart';
+import '../../services/language_notifier.dart';
 import '../../services/navigation_service.dart';
 import '../../services/wiki_service.dart';
 import '../../services/finding_paths_service.dart';
@@ -56,7 +57,9 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   Future<void> _initServices() async {
-    await findingPathsService.init();
+    final languageNotifier = locator<LanguageNotifier>();
+    final languageCode = languageNotifier.currentLanguageCode;
+    await findingPathsService.init(languageCode);
     _fetchOptions(currentTitle);
     //_fetchKeywords(currentTitle); //
   }
