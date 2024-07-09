@@ -5,6 +5,7 @@ import '../../constants/strings.dart';
 import '../../domain/entities/game_mode.dart';
 import '../../locator.dart';
 import '../../services/finding_paths_service.dart';
+import '../../services/language_notifier.dart';
 import '../../services/navigation_service.dart';
 import '../../services/wiki_service.dart';
 import '../widgets/category_modal_content.dart';
@@ -71,16 +72,16 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
     super.dispose();
   }
 
-  String getTitle(GameMode gameMode) {
-    switch (widget.gameMode) {
+  String getTitle(GameMode gameMode, String languageCode) {
+    switch (gameMode) {
       case GameMode.findYourLikings:
-        return AppStrings.findYourLikings;
+        return AppStrings.getTranslatedString('findYourLikings', languageCode);
       case GameMode.likingSpectrumJourney:
-        return AppStrings.likingSpectrumJourney;
+        return AppStrings.getTranslatedString('likingSpectrumJourney', languageCode);
       case GameMode.anyfinCanHappen:
-        return AppStrings.anyfinCanHappen;
+        return AppStrings.getTranslatedString('anyfinCanHappen', languageCode);
       default:
-        return AppStrings.findYourLikings; // Default title or consider throwing an exception if unreachable
+        return AppStrings.getTranslatedString('findYourLikings', languageCode); // Default title or consider throwing an exception if unreachable
     }
   }
 
@@ -97,14 +98,14 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
     }
   }
 
-  Widget _categorySelector(BuildContext context) {
+  Widget _categorySelector(BuildContext context, String language) {
     return Row(
       children: <Widget>[
         Expanded(
           child: TextField(
             controller: TextEditingController(text: _selectedCategory),
             decoration: InputDecoration(
-              labelText: 'Select a category',
+              labelText: AppStrings.getTranslatedString('selectCategory', language),
               border: OutlineInputBorder(),
             ),
             readOnly: true,
@@ -231,76 +232,82 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(getTitle(widget.gameMode)),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(getBackgroundImage()),
-            fit: BoxFit.cover,
+    final languageNotifier = locator<LanguageNotifier>();
+    return ValueListenableBuilder<String>(
+      valueListenable: languageNotifier,
+      builder: (context, language, child) {
+        final languageCode = languageNotifier.currentLanguageCode;
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(getTitle(widget.gameMode, languageCode)),
           ),
-        ),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Container(
-                padding: EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      getTitle(widget.gameMode),
-                      style: TextStyle(
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                      textAlign: TextAlign.center,
+          body: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(getBackgroundImage()),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Center(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Container(
+                    padding: EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
-                    SizedBox(height: 16),
-                    if (isStartTitleEditable)
-                      _buildTitleFieldWithRandomButton(
-                        controller: _startTitleController,
-                        label: 'Starting Concept',
-                        onRandomSelected: () => selectRandomArticleForTitle(_startTitleController, true),
-                        onInfoSelected: () => showArticleInfoDialog(context, _startTitleController.text),
-                      ),
-                    SizedBox(height: 16),
-                    if (isGoalTitleEditable)
-                      _buildTitleFieldWithRandomButton(
-                        controller: _goalTitleController,
-                        label: 'Goal Concept',
-                        onRandomSelected: () => selectRandomArticleForTitle(_goalTitleController, false),
-                        onInfoSelected: () => showArticleInfoDialog(context, _goalTitleController.text),
-                      ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        GameMode selectedMode = GameMode.findYourLikings;
-                        String startTitle = _startTitleController.text;
-                        String goalTitle = _goalTitleController.text;
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(
+                          getTitle(widget.gameMode, languageCode),
+                          style: TextStyle(
+                            fontSize: 25.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 16),
+                        if (isStartTitleEditable)
+                          _buildTitleFieldWithRandomButton(
+                            controller: _startTitleController,
+                            label: AppStrings.getTranslatedString('startingConcept', languageCode),
+                            onRandomSelected: () => selectRandomArticleForTitle(_startTitleController, true),
+                            onInfoSelected: () => showArticleInfoDialog(context, _startTitleController.text),
+                          ),
+                        SizedBox(height: 16),
+                        if (isGoalTitleEditable)
+                          _buildTitleFieldWithRandomButton(
+                            controller: _goalTitleController,
+                            label: AppStrings.getTranslatedString('goalConcept', languageCode),
+                            onRandomSelected: () => selectRandomArticleForTitle(_goalTitleController, false),
+                            onInfoSelected: () => showArticleInfoDialog(context, _goalTitleController.text),
+                          ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            GameMode selectedMode = GameMode.findYourLikings;
+                            String startTitle = _startTitleController.text;
+                            String goalTitle = _goalTitleController.text;
 
-                        locator<NavigationService>().navigateToGame(context, selectedMode, startTitle, goalTitle);
-                      },
-                      child: Text('Start Game'),
+                            locator<NavigationService>().navigateToGame(context, selectedMode, startTitle, goalTitle);
+                          },
+                          child: Text(AppStrings.getTranslatedString('startGame', languageCode)),
+                        ),
+                        const SizedBox(height: 16),
+                        _categorySelector(context, languageCode),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                    _categorySelector(context),
-                  ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
-
 }
