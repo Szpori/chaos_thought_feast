@@ -10,12 +10,12 @@ class StringUtils {
   }
 
   static Map<String, String> languageMap = {
-    'English': 'eng',
+    'English': 'en',
     'Polish': 'pl'
   };
 
   static Map<String, String> reverseLanguageMap = {
-    'eng': 'English',
+    'en': 'English',
     'pl': 'Polish'
   };
 }

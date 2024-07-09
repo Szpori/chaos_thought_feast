@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/StringUtils.dart';
 
 class LanguageNotifier extends ValueNotifier<String> {
-  LanguageNotifier() : super('eng') {
+  LanguageNotifier() : super('en') {
     _loadLanguage();
   }
 
@@ -12,7 +12,7 @@ class LanguageNotifier extends ValueNotifier<String> {
     final prefs = await SharedPreferences.getInstance();
     String? languageCode = prefs.getString('language');
     if (languageCode == null) {
-      languageCode = 'eng';
+      languageCode = 'en';
       await prefs.setString('language', languageCode);
     }
     value = StringUtils.reverseLanguageMap[languageCode]!;

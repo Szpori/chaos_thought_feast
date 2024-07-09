@@ -28,6 +28,7 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
+  final languageNotifier = locator<LanguageNotifier>();
   late String currentTitle;
   String articleDescription = "";
   int? _expandedIndex;
@@ -57,7 +58,6 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   Future<void> _initServices() async {
-    final languageNotifier = locator<LanguageNotifier>();
     final languageCode = languageNotifier.currentLanguageCode;
     await findingPathsService.init(languageCode);
     _fetchOptions(currentTitle);
@@ -71,7 +71,7 @@ class _GameScreenState extends State<GameScreen> {
 
   void _fetchOptions(String title) async {
     try {
-      var fetchedOptions = await wikiService.fetchTitlesFromWikipedia(title);
+      var fetchedOptions = await wikiService.fetchTitlesFromWikipedia(title, languageNotifier.currentLanguageCode);
       if (mounted) {
         setState(() {
           options = fetchedOptions ?? [];
@@ -115,7 +115,7 @@ class _GameScreenState extends State<GameScreen> {
    */
 
   void _showArticleDescriptionDialog(String title) async {
-    var description = await WikiService().fetchIntroText(title);
+    var description = await WikiService().fetchIntroText(title, languageNotifier.currentLanguageCode);
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -356,7 +356,7 @@ class _GameScreenState extends State<GameScreen> {
                         }
                       });
 
-                      WikiService().fetchIntroText(options[index]).then((description) {
+                      WikiService().fetchIntroText(options[index], languageNotifier.currentLanguageCode).then((description) {
                         if (mounted) {
                           setState(() {
                             if (index == _expandedIndex) {

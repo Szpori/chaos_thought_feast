@@ -27,6 +27,7 @@ class GameSetupScreen extends StatefulWidget {
 }
 
 class _GameSetupScreenState extends State<GameSetupScreen> {
+  final languageNotifier = locator<LanguageNotifier>();
   late TextEditingController _startTitleController;
   late TextEditingController _goalTitleController;
   late LocalDataService _localDataService;
@@ -50,7 +51,6 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
   }
 
   Future<void> _initData() async {
-    final languageNotifier = locator<LanguageNotifier>();
     final languageCode = languageNotifier.currentLanguageCode;
     await _localDataService.loadArticles(languageCode);
     await _localDataService.loadCategories(languageCode);
@@ -179,7 +179,7 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
 
   void showArticleInfoDialog(BuildContext context, String title) async {
     WikiService wikiService = WikiService();
-    String introText = await wikiService.fetchIntroText(title);
+    String introText = await wikiService.fetchIntroText(title, languageNotifier.currentLanguageCode);
 
     showDialog(
       context: context,

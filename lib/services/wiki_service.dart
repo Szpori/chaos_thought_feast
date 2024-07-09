@@ -3,17 +3,16 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:html/parser.dart' as html_parser; // Use the html package
 import 'package:html/dom.dart' as dom;
-import 'lang_service.dart';
 
 class WikiService {
   final http.Client client;
 
   WikiService({http.Client? client}) : client = client ?? http.Client();
 
-  Future<List<String>> fetchTitlesFromWikipedia(String pageTitle) async {
+  Future<List<String>> fetchTitlesFromWikipedia(String pageTitle, String langCode) async {
     List<String> titles = [];
     try {
-      final response = await client.get(Uri.parse('https://en.wikipedia.org/w/api.php?action=parse&page=$pageTitle&prop=text&format=json'));
+      final response = await client.get(Uri.parse('https://$langCode.wikipedia.org/w/api.php?action=parse&page=$pageTitle&prop=text&format=json'));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final pageHtml = data['parse']['text']['*'];
@@ -64,20 +63,16 @@ class WikiService {
     return !title.endsWith("(identifier)") && !title.contains(":") && !title.contains(RegExp(r'ISO \d+-\d+'));
   }
 
-  Future<String> fetchIntroText(String pageTitle) async {
+  Future<String> fetchIntroText(String pageTitle, String langCode) async {
     try {
       final response = await client.get(Uri.parse(
-          'https://en.wikipedia.org/w/api.php?action=query&titles=$pageTitle&prop=extracts&exintro&explaintext&format=json'));
+          'https://$langCode.wikipedia.org/w/api.php?action=query&titles=$pageTitle&prop=extracts&exintro&explaintext&format=json'));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final pages = data['query']['pages'];
         final pageId = pages.keys.first;
         final extract = pages[pageId]['extract'];
-
-        //List<String> keywords = extractKeywords(extract); // Use the extractKeywords function
-        //print("Extracted Keywords: $keywords"); // Output the keywords to the console
-
 
         return cutToThreeSentencesOrSixtyWords(extract);
       } else {
@@ -89,10 +84,10 @@ class WikiService {
     }
   }
 
-  Future<String> fetchIntroTextWithScore(String pageTitle, List<String> currentTitleKeywords) async {
+  Future<String> fetchIntroTextWithScore(String pageTitle, List<String> currentTitleKeywords, String langCode) async {
     try {
       final response = await client.get(Uri.parse(
-          'https://en.wikipedia.org/w/api.php?action=query&titles=$pageTitle&prop=extracts&exintro&explaintext&format=json'));
+          'https://$langCode.wikipedia.org/w/api.php?action=query&titles=$pageTitle&prop=extracts&exintro&explaintext&format=json'));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -103,8 +98,6 @@ class WikiService {
         var description = cutToThreeSentencesOrSixtyWords(extract);
 
         List<String> keywords = extractKeywords(description);
-        //print("Extracted Keywords: $keywords");
-
         double jaccardSimilarity = calculateJaccardSimilarity(currentTitleKeywords, keywords);
 
         String textWithScore = 'Similarity Score: $jaccardSimilarity\n$description';
@@ -129,10 +122,10 @@ class WikiService {
     return intersection / union;
   }
 
-  Future<List<String>> fetchKeywords(String pageTitle) async {
+  Future<List<String>> fetchKeywords(String pageTitle, String langCode) async {
     try {
       final response = await client.get(Uri.parse(
-          'https://en.wikipedia.org/w/api.php?action=query&titles=$pageTitle&prop=extracts&exintro&explaintext&format=json'));
+          'https://$langCode.wikipedia.org/w/api.php?action=query&titles=$pageTitle&prop=extracts&exintro&explaintext&format=json'));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -141,7 +134,6 @@ class WikiService {
         final extract = pages[pageId]['extract'];
 
         List<String> keywords = extractKeywords(extract);
-        //print("Extracted Keywords: $keywords");
 
         return keywords;
       } else {
@@ -175,5 +167,13 @@ class WikiService {
     }
 
     return buffer.toString().trim();
+  }
+
+  List<String> extractKeywords(String text) {
+    // Simple keyword extraction logic: split by spaces and return words longer than 3 characters
+    return text
+        .split(' ')
+        .where((word) => word.length > 3)
+        .toList();
   }
 }
