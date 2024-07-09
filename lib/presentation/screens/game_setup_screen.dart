@@ -50,8 +50,10 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
   }
 
   Future<void> _initData() async {
-    await _localDataService.loadArticles();
-    await _localDataService.loadCategories();
+    final languageNotifier = locator<LanguageNotifier>();
+    final languageCode = languageNotifier.currentLanguageCode;
+    await _localDataService.loadArticles(languageCode);
+    await _localDataService.loadCategories(languageCode);
     await _findingPathsService.init();
     _fetchCategoriesFromLocalData();
   }
@@ -215,6 +217,7 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
       randomArticleTitle = await _localDataService.getRandomArticleFromCategory(_selectedCategory!);
     }
 
+    /*
     if (checkOutgoingLinks) {
       while (randomArticleTitle != null && !FindingPathsService().hasOutgoingLinks(randomArticleTitle)) {
         randomArticleTitle = await _localDataService.getRandomArticle();
@@ -224,6 +227,8 @@ class _GameSetupScreenState extends State<GameSetupScreen> {
         randomArticleTitle = await _localDataService.getRandomArticle();
       }
     }
+
+     */
 
     setState(() {
       controller.text = randomArticleTitle ?? "No article found";
