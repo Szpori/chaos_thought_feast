@@ -98,7 +98,6 @@ class NavigationService {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => GameWinScreen(
-            goalConcept: goalConcept,
             pathText: conceptsHistory.join(" -> "),
             onGoToMainMenu: () {
               Navigator.popUntil(context, (route) => route.isFirst);

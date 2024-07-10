@@ -29,6 +29,10 @@ class AppStrings {
       'foundPaths': 'Found Paths',
       'loading': 'Loading...',
       'errorLoadingDescription': 'Error loading description.',
+      'youConnectedTheDots': 'You connected the dots!',
+      'yourWikiPath': 'Your Wiki Path',
+      'tryAgain': 'Try Again',
+      'goToMainMenu': 'Main Menu',
     },
     'pl': {
       'chaosThoughtFeast': 'Chaotyczna Uczta Myśli',
@@ -57,6 +61,10 @@ class AppStrings {
       'foundPaths': 'Znalezione ścieżki',
       'loading': 'Ładowanie...',
       'errorLoadingDescription': 'Błąd ładowania opisu.',
+      'youConnectedTheDots': 'Połączyłeś kropki!',
+      'yourWikiPath': 'Twoja ścieżka Wiki',
+      'tryAgain': 'Spróbuj ponownie',
+      'goToMainMenu': 'Menu Główne',
     }
   };
 

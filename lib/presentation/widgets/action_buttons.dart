@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 class ActionButtons extends StatelessWidget {
   final VoidCallback onTryAgain;
   final VoidCallback onGoToMainMenu;
+  final String tryAgainText;
+  final String goToMainMenuText;
 
   const ActionButtons({
     Key? key,
     required this.onTryAgain,
     required this.onGoToMainMenu,
+    required this.tryAgainText,
+    required this.goToMainMenuText,
   }) : super(key: key);
 
   @override
@@ -20,7 +24,7 @@ class ActionButtons extends StatelessWidget {
           Expanded(
             child: ElevatedButton(
               onPressed: onTryAgain,
-              child: Text('Try Again'),
+              child: Text(tryAgainText),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).primaryColor,
                 foregroundColor: Colors.white,
@@ -31,7 +35,7 @@ class ActionButtons extends StatelessWidget {
           Expanded(
             child: ElevatedButton(
               onPressed: onGoToMainMenu,
-              child: Text('Main Menu'),
+              child: Text(goToMainMenuText),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).primaryColor,
                 foregroundColor: Colors.white,

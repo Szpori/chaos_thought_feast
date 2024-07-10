@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../constants/strings.dart';
 import '../widgets/action_buttons.dart';
 
 class GameLoseScreen extends StatelessWidget {
@@ -64,6 +65,8 @@ class GameLoseScreen extends StatelessWidget {
               ActionButtons(
                 onTryAgain: onTryAgain,
                 onGoToMainMenu: onGoToMainMenu,
+                tryAgainText: 'Try Again',
+                goToMainMenuText: 'Main Menu',
               ),
               Spacer(),
             ],
