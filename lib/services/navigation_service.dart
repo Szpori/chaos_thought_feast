@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../constants/strings.dart';
 import '../domain/entities/game_mode.dart';
 import '../domain/entities/game_record.dart';
 import '../presentation/screens/game_lose_screen.dart';
@@ -11,7 +12,6 @@ import '../presentation/screens/profile_screen.dart';
 import 'fire_db_auth_service.dart';
 import 'fire_db_service.dart';
 import 'language_notifier.dart';
-
 
 class NavigationService {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -32,6 +32,7 @@ class NavigationService {
   }
 
   void navigateToGameSetup(BuildContext context, [GameMode? gameMode]) {
+    final languageCode = languageNotifier.currentLanguageCode;
     final modeToUse = gameMode ?? _currentGameMode;
     if (modeToUse != null) {
       _currentGameMode = modeToUse;
@@ -40,8 +41,8 @@ class NavigationService {
         MaterialPageRoute(
           builder: (context) => GameSetupScreen(
             gameMode: modeToUse,
-            startTitle: 'County Dublin', // Placeholder, adjust as necessary
-            goalTitle: 'Europe', // Placeholder, adjust as necessary
+            startTitle: AppStrings.getTranslatedString('eye', languageCode), // Placeholder, adjust as necessary
+            goalTitle: AppStrings.getTranslatedString('europe', languageCode), // Placeholder, adjust as necessary
           ),
         ),
       );
@@ -63,6 +64,7 @@ class NavigationService {
   }
 
   Future<void> navigateToEndGame(BuildContext context, bool hasWon, String startConcept, String goalConcept, List<String> conceptsHistory, GameMode gameMode, int steps) async {
+    final languageCode = languageNotifier.currentLanguageCode;
     if (hasWon) {
       User? user = firebaseAuthService.getCurrentUser();
       String recordHolder = user?.email ?? 'anonymous';
@@ -80,16 +82,16 @@ class NavigationService {
 
       switch (result) {
         case SaveRecordResult.noNewRecord:
-          resultText = 'You found $goalConcept in $steps steps.';
+          resultText = '${AppStrings.getTranslatedString('youFound', languageCode)} $goalConcept ${AppStrings.getTranslatedString('inSteps', languageCode)} $steps ${AppStrings.getTranslatedString('steps', languageCode)}.';
           break;
         case SaveRecordResult.newRecord:
-          resultText = 'This path has remained unexplored until now! You\'ve set a new record in its discovery.';
+          resultText = AppStrings.getTranslatedString('newRecord', languageCode);
           break;
         case SaveRecordResult.previousRecordBeaten:
-          resultText = 'You\'ve discovered a shorter path linking both concepts! You surpassed the previous record.';
+          resultText = AppStrings.getTranslatedString('previousRecordBeaten', languageCode);
           break;
         default:
-          resultText = 'Congratulations on your win!';
+          resultText = AppStrings.getTranslatedString('congratulations', languageCode);
           break;
       }
 
