@@ -5,6 +5,7 @@ import 'package:chaos_thought_feast/utils/StringUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
+import '../../constants/strings.dart';
 import '../../locator.dart';
 import '../../services/language_notifier.dart';
 import '../../services/navigation_service.dart';
@@ -61,7 +62,6 @@ class _GameScreenState extends State<GameScreen> {
     final languageCode = languageNotifier.currentLanguageCode;
     await findingPathsService.init(languageCode);
     _fetchOptions(currentTitle);
-    //_fetchKeywords(currentTitle); //
   }
 
   @override
@@ -95,25 +95,6 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
 
-  /*
-  void _fetchKeywords(String title) async {
-    var fetchedKeywords = await WikiService().fetchKeywords(title);
-    if (mounted) {
-      setState(() {
-        goalTitleKeywords = fetchedKeywords;
-        _expandedIndex = null;
-        articleDescription = "";
-      });
-      _scrollController.animateTo(
-        0,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
-  }
-
-   */
-
   void _showArticleDescriptionDialog(String title) async {
     var description = await WikiService().fetchIntroText(title, languageNotifier.currentLanguageCode);
     showDialog(
@@ -129,7 +110,7 @@ class _GameScreenState extends State<GameScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Close'),
+              child: Text(AppStrings.getTranslatedString('close', languageNotifier.currentLanguageCode)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -193,7 +174,7 @@ class _GameScreenState extends State<GameScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Found Paths'),
+          title: Text(AppStrings.getTranslatedString('foundPaths', languageNotifier.currentLanguageCode)),
           content: SingleChildScrollView(
             child: ListBody(
               children: pathDescriptions.map((description) => Text(description)).toList(),
@@ -201,7 +182,7 @@ class _GameScreenState extends State<GameScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Close'),
+              child: Text(AppStrings.getTranslatedString('close', languageNotifier.currentLanguageCode)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -249,6 +230,7 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final languageCode = languageNotifier.currentLanguageCode;
 
     return Scaffold(
       appBar: AppBar(
@@ -266,7 +248,7 @@ class _GameScreenState extends State<GameScreen> {
                   alignment: Alignment.center,
                   children: [
                     Text(
-                      'Current: $currentTitle',
+                      '${AppStrings.getTranslatedString('current', languageCode)}: $currentTitle',
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -295,7 +277,7 @@ class _GameScreenState extends State<GameScreen> {
                   alignment: Alignment.center,
                   children: [
                     Text(
-                      'Goal: ${widget.goalConcept}',
+                      '${AppStrings.getTranslatedString('goal', languageCode)}: ${widget.goalConcept}',
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -352,7 +334,7 @@ class _GameScreenState extends State<GameScreen> {
                           articleDescription = "";
                         } else {
                           _expandedIndex = index;
-                          articleDescription = "Loading...";
+                          articleDescription = AppStrings.getTranslatedString('loading', languageCode);
                         }
                       });
 
@@ -367,7 +349,7 @@ class _GameScreenState extends State<GameScreen> {
                       }).catchError((error) {
                         if (mounted) {
                           setState(() {
-                            articleDescription = "Error loading description.";
+                            articleDescription = AppStrings.getTranslatedString('errorLoadingDescription', languageCode);
                           });
                         }
                       });
@@ -407,20 +389,20 @@ class _GameScreenState extends State<GameScreen> {
                 ElevatedButton(
                   onPressed: () {
                     locator<NavigationService>().navigateToEndGame(
-                      context,
-                      false,
-                      widget.goalConcept,
-                      widget.startConcept, conceptsHistory,
-                      widget.gameMode,
-                      conceptsHistory.length
+                        context,
+                        false,
+                        widget.goalConcept,
+                        widget.startConcept, conceptsHistory,
+                        widget.gameMode,
+                        conceptsHistory.length
                     );
                   },
-                  child: Text('End Game'),
+                  child: Text(AppStrings.getTranslatedString('endGame', languageCode)),
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
                 ),
                 ElevatedButton(
                   onPressed: _goBack,
-                  child: Text('Go Back'),
+                  child: Text(AppStrings.getTranslatedString('goBack', languageCode)),
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
                 ),
               ],

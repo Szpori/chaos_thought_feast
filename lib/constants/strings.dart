@@ -21,6 +21,14 @@ class AppStrings {
       'previousRecordBeaten': 'You\'ve discovered a shorter path linking both concepts! You surpassed the previous record.',
       'congratulations': 'Congratulations on your win!',
       'noContent': 'No content found',
+      'current': 'Current',
+      'goal': 'Goal',
+      'close': 'Close',
+      'endGame': 'End Game',
+      'goBack': 'Go Back',
+      'foundPaths': 'Found Paths',
+      'loading': 'Loading...',
+      'errorLoadingDescription': 'Error loading description.',
     },
     'pl': {
       'chaosThoughtFeast': 'Chaotyczna Uczta Myśli',
@@ -41,6 +49,14 @@ class AppStrings {
       'previousRecordBeaten': 'Odkryłeś krótszą ścieżkę łączącą oba pojęcia! Przekroczyłeś poprzedni rekord.',
       'congratulations': 'Gratulacje z wygranej!',
       'noContent': 'Brak treści',
+      'current': 'Aktualnie',
+      'goal': 'Cel',
+      'close': 'Zamknij',
+      'endGame': 'Zakończ grę',
+      'goBack': 'Wróć',
+      'foundPaths': 'Znalezione ścieżki',
+      'loading': 'Ładowanie...',
+      'errorLoadingDescription': 'Błąd ładowania opisu.',
     }
   };
 
