@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:chaos_thought_feast/services/local_data_service.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,7 +27,7 @@ void main() {
       when(() => mockAssetBundle.loadString('assets/data/mostPopularPagesWithCategories.json'))
           .thenAnswer((_) async => articlesJson);
 
-      await localDataService.loadArticles();
+      await localDataService.loadArticles('en');
 
       expect(await localDataService.getRandomArticle(), isNotNull);
     });
@@ -42,7 +41,7 @@ void main() {
       when(() => mockAssetBundle.loadString('assets/data/categories.json'))
           .thenAnswer((_) async => categoriesJson);
 
-      await localDataService.loadCategories();
+      await localDataService.loadCategories('en');
 
       expect(localDataService.getCategories(), containsPair('Category 1', ['Article 1']));
     });
@@ -57,7 +56,7 @@ void main() {
       when(() => mockAssetBundle.loadString('assets/data/mostPopularPagesWithCategories.json'))
           .thenAnswer((_) async => articlesJson);
 
-      await localDataService.loadArticles();
+      await localDataService.loadArticles('en');
       String? articleTitle = await localDataService.getRandomArticleFromCategory('Category 1');
 
       expect(['Article 1', 'Article 2'], contains(articleTitle));
@@ -72,7 +71,7 @@ void main() {
       when(() => mockAssetBundle.loadString('assets/data/mostPopularPagesWithCategories.json'))
           .thenAnswer((_) async => articlesJson);
 
-      await localDataService.loadArticles();
+      await localDataService.loadArticles('en');
       String? articleTitle = await localDataService.getRandomArticle();
 
       expect(['Article 1', 'Article 2'], contains(articleTitle));
@@ -84,7 +83,7 @@ void main() {
       });
 
       test('loadCategories should correctly load real categories from JSON', () async {
-        await localDataService.loadCategories();
+        await localDataService.loadCategories('en');
         final categories = localDataService.getCategories();
 
         expect(categories, isNotEmpty);
@@ -92,6 +91,5 @@ void main() {
         expect(categories['Technology'], containsAll(['IT', 'Technology']));
       });
     });
-
   });
 }
