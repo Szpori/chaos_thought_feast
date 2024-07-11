@@ -50,6 +50,7 @@ dev_dependencies:
   mockito: 5.4.4
   firebase_core: 2.27.1
   firebase_auth: 4.17.0
+  firebase_auth_mocks: 0.13.0
   mocktail: 1.0.3
   firebase_core_platform_interface: ^5.0.0
   firebase_auth_platform_interface: ^7.1.0

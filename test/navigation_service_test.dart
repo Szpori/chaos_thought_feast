@@ -10,13 +10,15 @@ import 'package:chaos_thought_feast/presentation/screens/game_setup_screen.dart'
 import 'package:chaos_thought_feast/presentation/screens/game_win_screen.dart';
 import 'package:chaos_thought_feast/presentation/screens/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:get_it/get_it.dart';
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 
 class MockFireDBService extends Mock implements IFireDBService {}
 class MockFirebaseAuthService extends Mock implements IFirebaseAuthService {}
-class MockUser extends Mock implements User {}
 class MockLanguageNotifier extends Mock implements LanguageNotifier {}
 
 class FakeGameRecord extends Fake implements GameRecord {}
@@ -27,10 +29,10 @@ void main() {
   late NavigationService navigationService;
   late MockFireDBService mockFireDBService;
   late MockFirebaseAuthService mockFirebaseAuthService;
-  late MockUser mockUser;
   late MockLanguageNotifier mockLanguageNotifier;
+  final getIt = GetIt.instance;
 
-  setUpAll(() {
+  setUpAll(() async {
     registerFallbackValue(FakeGameRecord());
   });
 
@@ -43,11 +45,25 @@ void main() {
       firebaseAuthService: mockFirebaseAuthService,
       languageNotifier: mockLanguageNotifier,
     );
-    mockUser = MockUser();
 
-    // Registering mock implementations
+    // Create a mock user
+    final mockUser = MockUser(
+      isAnonymous: false,
+      uid: 'someuid',
+      email: 'test@example.com',
+    );
+
+    // Mock the auth instance and current user
+    final auth = MockFirebaseAuth(mockUser: mockUser);
     when(() => mockFirebaseAuthService.getCurrentUser()).thenReturn(mockUser);
-    when(() => mockUser.email).thenReturn('test@example.com');
+    when(() => mockLanguageNotifier.currentLanguageCode).thenReturn('en');
+
+    // Register the mocks in GetIt
+    getIt.registerSingleton<LanguageNotifier>(mockLanguageNotifier);
+  });
+
+  tearDown(() {
+    getIt.reset(); // Reset GetIt after each test to avoid conflicts
   });
 
   group('NavigationService', () {
