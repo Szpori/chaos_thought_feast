@@ -33,6 +33,9 @@ class AppStrings {
       'yourWikiPath': 'Your Wiki Path',
       'tryAgain': 'Try Again',
       'goToMainMenu': 'Main Menu',
+      'youFailedToReachGoal': 'You failed to reach the goal!',
+      'yourPathWas': 'Your path was',
+      'goalConceptWas': 'Goal Concept was',
     },
     'pl': {
       'chaosThoughtFeast': 'Chaotyczna Uczta Myśli',
@@ -57,7 +60,7 @@ class AppStrings {
       'goal': 'Cel',
       'close': 'Zamknij',
       'endGame': 'Zakończ grę',
-      'goBack': 'Wróć',
+      'goBack': 'Cofnij',
       'foundPaths': 'Znalezione ścieżki',
       'loading': 'Ładowanie...',
       'errorLoadingDescription': 'Błąd ładowania opisu.',
@@ -65,6 +68,9 @@ class AppStrings {
       'yourWikiPath': 'Twoja ścieżka Wiki',
       'tryAgain': 'Spróbuj ponownie',
       'goToMainMenu': 'Menu Główne',
+      'youFailedToReachGoal': 'Nie udało ci się osiągnąć celu!',
+      'yourPathWas': 'Twoja ścieżka to',
+      'goalConceptWas': 'Pojęciem końcowym było',
     }
   };
 
